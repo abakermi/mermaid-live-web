@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Analytics } from '@vercel/analytics/next';
+
 import "./globals.css";
 import ClientWrapper from '@/components/ClientWrapper';
 
@@ -48,7 +50,9 @@ export default function RootLayout({
       <body className="antialiased">
         <ClientWrapper>
           {children}
+    
         </ClientWrapper>
+        <Analytics />
       </body>
     </html>
   );
