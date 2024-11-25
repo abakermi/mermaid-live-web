@@ -8,7 +8,7 @@ import mermaid from "mermaid";
 import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { ZoomIn, ZoomOut } from 'lucide-react';
+import { ZoomIn, ZoomOut, Share2 } from 'lucide-react';
 
 
 export default function DiagramEditor() {
@@ -81,6 +81,20 @@ export default function DiagramEditor() {
     }
   };
 
+  // Add near the top of the component
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sharedCode = params.get('code');
+    if (sharedCode) {
+      try {
+        const decodedCode = atob(sharedCode);
+        setCode(decodedCode);
+      } catch (e) {
+        console.error('Failed to decode shared URL');
+      }
+    }
+  }, []);
+
   if (!mounted) return null;
 
   return (
@@ -106,6 +120,19 @@ export default function DiagramEditor() {
               onClick={() => setActiveTab('config')}
             >
               Config
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                const params = new URLSearchParams();
+                params.set('code', btoa(code)); // base64 encode
+                const url = `${window.location.origin}?${params.toString()}`;
+                navigator.clipboard.writeText(url);
+                // Optional: Add toast notification that URL was copied
+              }}
+            >
+              <Share2 className="h-4 w-4" />
             </Button>
 <GitHubButton href="https://github.com/abakermi/mermaid-live-web" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star abakermi/mermaid-live-web on GitHub">Star</GitHubButton>
           </div>
