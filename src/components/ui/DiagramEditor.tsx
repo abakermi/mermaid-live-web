@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import GitHubButton from 'react-github-btn'
 import Editor from "@monaco-editor/react";
 import mermaid from "mermaid";
+import { Toaster, toast } from 'react-hot-toast';
 
 import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
@@ -126,10 +127,10 @@ export default function DiagramEditor() {
               size="icon"
               onClick={() => {
                 const params = new URLSearchParams();
-                params.set('code', btoa(code)); // base64 encode
+                params.set('code', btoa(code));
                 const url = `${window.location.origin}?${params.toString()}`;
                 navigator.clipboard.writeText(url);
-                // Optional: Add toast notification that URL was copied
+                toast.success('Share URL copied to clipboard!');
               }}
             >
               <Share2 className="h-4 w-4" />
@@ -190,6 +191,7 @@ export default function DiagramEditor() {
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
+      <Toaster position="bottom-right" />
     </div>
   );
 }
