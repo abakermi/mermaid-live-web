@@ -9,7 +9,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { ZoomIn, ZoomOut, Share2 } from 'lucide-react';
+import { ZoomIn, ZoomOut, Share2, Download, Palette } from 'lucide-react';
 
 
 export default function DiagramEditor() {
@@ -27,6 +27,7 @@ export default function DiagramEditor() {
   "startOnLoad": true
 }`);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [bgColor, setBgColor] = useState('#ffffff');
 
   // Initialize mermaid once
   useEffect(() => {
@@ -135,6 +136,38 @@ export default function DiagramEditor() {
             >
               <Share2 className="h-4 w-4" />
             </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                const svg = diagramRef.current?.querySelector('svg');
+                if (svg) {
+                  const canvas = document.createElement('canvas');
+                  const ctx = canvas.getContext('2d');
+                  const data = new XMLSerializer().serializeToString(svg);
+                  const img = new Image();
+                  
+                  img.onload = () => {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    if (ctx) {
+                      ctx.fillStyle = bgColor;
+                      ctx.fillRect(0, 0, canvas.width, canvas.height);
+                      ctx.drawImage(img, 0, 0);
+                    }
+                    const a = document.createElement('a');
+                    a.download = 'diagram.png';
+                    a.href = canvas.toDataURL('image/png');
+                    a.click();
+                    toast.success('Diagram downloaded!');
+                  };
+                  
+                  img.src = 'data:image/svg+xml;base64,' + btoa(data);
+                }
+              }}
+            >
+              <Download className="h-4 w-4" />
+            </Button>
 <GitHubButton href="https://github.com/abakermi/mermaid-live-web" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star abakermi/mermaid-live-web on GitHub">Star</GitHubButton>
           </div>
         </div>
@@ -162,8 +195,15 @@ export default function DiagramEditor() {
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={50}>
-          <div className="h-full p-4 bg-white dark:bg-gray-900 relative">
-            <div className="absolute top-10 right-10 flex gap-2">
+          <div className="h-full p-4 relative" style={{ backgroundColor: bgColor }}>
+            <div className="absolute z-10 top-10 right-10 flex gap-2">
+              <input
+                type="color"
+                value={bgColor}
+                onChange={(e) => setBgColor(e.target.value)}
+                className="w-8 h-8 rounded cursor-pointer"
+                title="Change background color"
+              />
               <Button 
                 variant="secondary" 
                 size="icon"
