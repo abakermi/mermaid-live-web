@@ -8,6 +8,7 @@ import mermaid from "mermaid";
 import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { ZoomIn, ZoomOut } from 'lucide-react';
 
 
 export default function DiagramEditor() {
@@ -24,6 +25,7 @@ export default function DiagramEditor() {
   "securityLevel": "loose",
   "startOnLoad": true
 }`);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   // Initialize mermaid once
   useEffect(() => {
@@ -132,8 +134,32 @@ export default function DiagramEditor() {
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={50}>
-          <div className="h-full p-4 bg-white dark:bg-gray-900">
-            <div ref={diagramRef} className="mermaid" />
+          <div className="h-full p-4 bg-white dark:bg-gray-900 relative">
+            <div className="absolute top-10 right-10 flex gap-2">
+              <Button 
+                variant="secondary" 
+                size="icon"
+                onClick={() => setZoomLevel(prev => Math.min(prev + 0.1, 2))}
+              >
+                <ZoomIn className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="secondary" 
+                size="icon"
+                onClick={() => setZoomLevel(prev => Math.max(prev - 0.1, 0.5))}
+              >
+                <ZoomOut className="h-4 w-4" />
+              </Button>
+            </div>
+            <div 
+              style={{ 
+                transform: `scale(${zoomLevel})`,
+                transformOrigin: 'top left',
+                transition: 'transform 0.2s'
+              }}
+            >
+              <div ref={diagramRef} className="mermaid" />
+            </div>
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
