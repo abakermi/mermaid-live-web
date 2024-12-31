@@ -28,6 +28,9 @@ export default function DiagramEditor() {
 }`);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [bgColor, setBgColor] = useState('#ffffff');
+  const [isPanning, setIsPanning] = useState(false);
+  const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
+  const [startPanPosition, setStartPanPosition] = useState({ x: 0, y: 0 });
 
   // Initialize mermaid once
   useEffect(() => {
@@ -96,6 +99,29 @@ export default function DiagramEditor() {
       }
     }
   }, []);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 0) { // Left click only
+      setIsPanning(true);
+      setStartPanPosition({
+        x: e.clientX - panPosition.x,
+        y: e.clientY - panPosition.y
+      });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isPanning) {
+      setPanPosition({
+        x: e.clientX - startPanPosition.x,
+        y: e.clientY - startPanPosition.y
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsPanning(false);
+  };
 
   if (!mounted) return null;
 
@@ -195,7 +221,14 @@ export default function DiagramEditor() {
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={50}>
-          <div className="h-full p-4 relative" style={{ backgroundColor: bgColor }}>
+          <div 
+            className="h-full p-4 relative overflow-hidden cursor-grab active:cursor-grabbing" 
+            style={{ backgroundColor: bgColor }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
             <div className="absolute z-10 top-10 right-10 flex gap-2">
               <input
                 type="color"
@@ -221,9 +254,9 @@ export default function DiagramEditor() {
             </div>
             <div 
               style={{ 
-                transform: `scale(${zoomLevel})`,
+                transform: `translate(${panPosition.x}px, ${panPosition.y}px) scale(${zoomLevel})`,
                 transformOrigin: 'top left',
-                transition: 'transform 0.2s'
+                transition: isPanning ? 'none' : 'transform 0.2s'
               }}
             >
               <div ref={diagramRef} className="mermaid" />
