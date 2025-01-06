@@ -1,6 +1,7 @@
 # Mermaid Live Editor
 
-A real-time editor for creating and editing Mermaid diagrams. Built with Next.js and shadcn/ui. [view demo](https://mermaid-live-web.vercel.app)
+A real-time editor for creating and editing Mermaid diagrams. Built with Next.js and shadcn/ui. [view demo](https://mermaidlive.site
+)
 
 
 <p align="center">
