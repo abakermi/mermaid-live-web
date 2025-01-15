@@ -154,6 +154,7 @@ export default function DiagramEditor() {
               size="icon"
               onClick={() => {
                 const params = new URLSearchParams();
+                console.log(code);
                 params.set('code', btoa(code));
                 const url = `${window.location.origin}?${params.toString()}`;
                 navigator.clipboard.writeText(url);
@@ -168,18 +169,26 @@ export default function DiagramEditor() {
               onClick={() => {
                 const svg = diagramRef.current?.querySelector('svg');
                 if (svg) {
+                  const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
+                  const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
+                  
                   const canvas = document.createElement('canvas');
                   const ctx = canvas.getContext('2d');
                   const data = new XMLSerializer().serializeToString(svg);
+                  const base64 = window.Buffer ? Buffer.from(data).toString('base64') : btoa(encodeURIComponent(data).replace(/%([0-9A-F]{2})/g,
+                      function toSolidBytes(match, p1) {
+                          return String.fromCharCode(parseInt(p1, 16));
+                      }));
                   const img = new Image();
                   
                   img.onload = () => {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
+                    canvas.width = svgWidth * 2;
+                    canvas.height = svgHeight * 2;
                     if (ctx) {
+                      ctx.scale(2, 2);
                       ctx.fillStyle = bgColor;
-                      ctx.fillRect(0, 0, canvas.width, canvas.height);
-                      ctx.drawImage(img, 0, 0);
+                      ctx.fillRect(0, 0, svgWidth, svgHeight);
+                      ctx.drawImage(img, 0, 0, svgWidth, svgHeight);
                     }
                     const a = document.createElement('a');
                     a.download = 'diagram.png';
@@ -188,7 +197,7 @@ export default function DiagramEditor() {
                     toast.success('Diagram downloaded!');
                   };
                   
-                  img.src = 'data:image/svg+xml;base64,' + btoa(data);
+                  img.src = 'data:image/svg+xml;base64,' + base64;
                 }
               }}
             >
