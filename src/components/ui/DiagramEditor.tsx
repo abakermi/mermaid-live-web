@@ -276,6 +276,9 @@ export default function DiagramEditor() {
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
+      <footer className="bg-purple-600/90 text-white p-2 text-right text-sm">
+        © 2025 <a href="https://abakermi.com" className="text-white hover:text-gray-300 underline">abakermi</a>
+      </footer>
       <Toaster position="bottom-right" />
     </div>
   );
