@@ -154,8 +154,11 @@ export default function DiagramEditor() {
               size="icon"
               onClick={() => {
                 const params = new URLSearchParams();
-                console.log(code);
-                params.set('code', btoa(code));
+                const base64 = window.Buffer ? Buffer.from(code).toString('base64') : btoa(encodeURIComponent(code).replace(/%([0-9A-F]{2})/g,
+                    function toSolidBytes(match, p1) {
+                        return String.fromCharCode(parseInt(p1, 16));
+                    }));
+                params.set('code', base64);
                 const url = `${window.location.origin}?${params.toString()}`;
                 navigator.clipboard.writeText(url);
                 toast.success('Share URL copied to clipboard!');
