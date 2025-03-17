@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Analytics } from '@vercel/analytics/next';
+import { GoogleAnalytics ,GoogleTagManager} from '@next/third-parties/google'
 
 import "./globals.css";
 import ClientWrapper from '@/components/ClientWrapper';
@@ -52,7 +52,8 @@ export default function RootLayout({
           {children}
     
         </ClientWrapper>
-        <Analytics />
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string} />
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID as string} />
       </body>
     </html>
   );
