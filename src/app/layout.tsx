@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { GoogleAnalytics ,GoogleTagManager} from '@next/third-parties/google'
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 
 import "./globals.css";
 import ClientWrapper from '@/components/ClientWrapper';
+import { PostHogProvider } from '@/components/PostHogProvider';
 
 export const metadata: Metadata = {
   title: "Mermaid Live Editor - Create Diagrams Online",
@@ -28,32 +29,33 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://mermaid-live-web.vercel.app",
-    siteName: "Mermaid Live Editor",
+    siteName: "Mermaid Live Editor"
   },
   viewport: {
     width: "device-width",
-    initialScale: 1,
+    initialScale: 1
   },
   robots: {
     index: true,
-    follow: true,
-  },
+    follow: true
+  }
 };
 
 export default function RootLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
   return (
     <html lang="en">
       <body className="antialiased">
-        <ClientWrapper>
-          {children}
-    
-        </ClientWrapper>
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string} />
-        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID as string} />
+        <PostHogProvider>
+          <ClientWrapper>
+            {children}
+          </ClientWrapper>
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string} />
+          <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID as string} />
+        </PostHogProvider>
       </body>
     </html>
   );
